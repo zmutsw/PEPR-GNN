@@ -1,15 +1,11 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import scanpy as sc
 import scvi as sv
 import pandas as pd
 import pickle as pkl
-import os
 import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
@@ -20,39 +16,21 @@ import scipy.stats as ss
 import math
 import doubletdetection as dd
 
-# set a working directory for saving plots
-os.chdir('/project/GCRB/Hon_lab/s437603/data/ghmt_multiome/analysis/')
-
-
-# In[2]:
-
-
 get_ipython().run_line_magic('matplotlib', 'inline')
 
-
-# ## Load in Matrices
-
-# In[3]:
-
-
-# BOXUN MULTIOME
+#Load in Matrices
+# Rep1 MULTIOME
 # RNA = BL107
 # ATAC = BL105
 # PERT = BL109, BL129
 
-# LANDON MULTIOME
+# Rep2 MULTIOME
 # RNA = LN10, LN12
 # ATAC = LN9, LN11
 # PERT = LW254, LW255, LW256, LW257
 
-data_dir = '/project/GCRB/Hon_lab/s437603/data/ghmt_multiome'
+data_dir = '' #FILL IN
 mat = 'matrix_cell_identity.csv.gz'
-
-# TM
-# pc_lib = sc.read(genex_data_dir + 'tabula-muris/droplet/adata.h5ad')
-# pc_lib = pc_lib[pc_lib.obs['cell_ontology_class_formatted'] == 'cardiac_muscle_cell']
-# pc_lib.var_names = [gene.partition('_')[2] for gene in pc_lib.var_names]
-# pc_lib.var_names_make_unique()
 
 # BL library___________________________________________________________________________________________________
 blmul_lib = sv.data.read_10x_multiome(data_dir+'/bl_multiome/BL107_BL105_10x/outs/filtered_feature_bc_matrix/')
