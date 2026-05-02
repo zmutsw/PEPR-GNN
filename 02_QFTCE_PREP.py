@@ -4,19 +4,15 @@
 #package imports
 import numpy as np
 import scanpy as sc
-import scvi as sv
 import pandas as pd
 import pickle as pkl
-import os
 import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
 import matplotlib.pyplot as plt
 import sklearn.linear_model as skl
-from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
-import itertools as itt
 
 #load in filtered files
 corna_lib = sc.read('corna_filtered.h5ad')
