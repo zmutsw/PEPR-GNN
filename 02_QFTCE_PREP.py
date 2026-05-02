@@ -66,7 +66,7 @@ chratac_lib.write('coce_atac.h5ad')
 
 #TSS TSV AND RNA LIB MODIFICATION__________________________________________________________________________________________________________
 #load in gtf
-gene_tsv = pd.read_csv('/project/GCRB/Hon_lab/s437603/data/references/mm10_cra/genes/genes.gtf')
+gene_tsv = pd.read_csv('genes.gtf') #use the mm10 genes.gtf file from 10x genomics
 gene_tsv = gene_tsv[4:]
 
 #keep only exon 1 positions
