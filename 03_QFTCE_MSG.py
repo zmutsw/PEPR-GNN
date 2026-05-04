@@ -9,7 +9,6 @@ import scanpy as sc
 import scvi as sv
 import pandas as pd
 import pickle as pkl
-import os
 import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
@@ -21,25 +20,6 @@ import math
 from timeit import default_timer
 from scipy.stats import percentileofscore
 import random as rn
-
-# set a working directory for saving plots
-os.chdir('/project/GCRB/Hon_lab/s437603/data/ghmt_multiome/analysis')
-
-
-# In[5]:
-
-
-577+743+688+2359,577+743,577+688
-
-
-# In[25]:
-
-
-199,1121,278,2769
-
-
-# In[26]:
-
 
 #dwd
 #pval check
