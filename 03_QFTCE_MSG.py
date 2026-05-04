@@ -21,130 +21,36 @@ from timeit import default_timer
 from scipy.stats import percentileofscore
 import random as rn
 
-#dwd
-#pval check
-k = 199      #input feature AND output feature
-N = 1320                   #input feature
-n = 477                  #output feature
-M = 4367                #total
-
-#find real p-val
-pval = ss.hypergeom.cdf(k,M,n,N)
-t1pval = min(pval,1-pval)*2
-print(t1pval,-np.log10(t1pval+1e-11))
-
-
-# In[25]:
-
-
-#dwd
-#pval check
-k = 577      #input feature AND output feature
-N = 1320                   #input feature
-n = 1265                  #output feature
-M = 4367                #total
-
-#find real p-val
-pval = ss.hypergeom.cdf(k,M,n,N)
-t1pval = min(pval,1-pval)*2
-print(t1pval,-np.log10(t1pval+1e-11))
-
-
-# In[2]:
-
-
-#BL
-lib = 'bl'
-#load in filtered files
-rna_lib = sc.read(lib+'rna_filtered.h5ad')
-atac_lib = sc.read(lib+'atac_filtered.h5ad')
-pert_lib = pkl.load(open(lib+'pert_filtered.pkl','rb'))
-#load in com,cel,cou
-ccc = pkl.load(open(lib+'ccc.pkl','rb'))
-#ccc = pkl.load(open(lib+'pdccc.pkl','rb'))
-
-#load in new prom_overlaps and promenh_overlaps with 1000bp offset
-#   [tss_ind,rna_ind,[atac_inds]] for enhol/promenhol
-#   [tss_ind,rna_ind,atac_ind] for promol
-promol = pkl.load(open(lib+'1000ce_prom_overlaps.pkl','rb'))
-promenhol = pkl.load(open(lib+'1000ce_promenh_overlaps.pkl','rb'))
-enhol = pkl.load(open(lib+'1000ce_enh_overlaps.pkl','rb'))
-
-ce_rna = pkl.load(open(lib+'nce_rna.pkl','rb'))                   #ce_rna but CPM normalized
-zce_rna = pkl.load(open(lib+'zce_rna.pkl','rb'))                  #nce_rna but z-scored
-ce_atac = pkl.load(open(lib+'nce_atac.pkl','rb'))                 #ce_atac but binarized and then CPM normalized
-ce_tss = pkl.load(open(lib+'ce_tss.pkl','rb'))                    #[chromosome,position,gene_name]
-
-
-# In[2]:
-
-
-#LN
-lib = 'ln'
-#load in filtered files
-rna_lib = sc.read(lib+'rna_filtered.h5ad')
-atac_lib = sc.read(lib+'atac_filtered.h5ad')
-pert_lib = pkl.load(open(lib+'pert_filtered.pkl','rb'))
-#load in com,cel,cou
-ccc = pkl.load(open(lib+'ccc.pkl','rb'))
-#ccc = pkl.load(open(lib+'pdccc.pkl','rb'))
-
-#load in new prom_overlaps and promenh_overlaps with 1000bp offset
-#   [tss_ind,rna_ind,[atac_inds]] for enhol/promenhol
-#   [tss_ind,rna_ind,atac_ind] for promol
-promol = pkl.load(open(lib+'1000ce_prom_overlaps.pkl','rb'))
-promenhol = pkl.load(open(lib+'1000ce_promenh_overlaps.pkl','rb'))
-enhol = pkl.load(open(lib+'1000ce_enh_overlaps.pkl','rb'))
-
-ce_rna = pkl.load(open(lib+'nce_rna.pkl','rb'))                   #ce_rna but CPM normalized
-zce_rna = pkl.load(open(lib+'zce_rna.pkl','rb'))                  #nce_rna but z-scored
-ce_atac = pkl.load(open(lib+'nce_atac.pkl','rb'))                 #ce_atac but binarized and then CPM normalized
-ce_tss = pkl.load(open(lib+'ce_tss.pkl','rb'))                    #[chromosome,position,gene_name]
-
-
-# In[2]:
-
-
-#Combined
+#Combined library
 lib = 'co'
 #load in filtered files
-rna_lib = sc.read(lib+'rna_filtered.h5ad')
-atac_lib = sc.read(lib+'atac_filtered.h5ad')
-pert_lib = pkl.load(open(lib+'pert_filtered.pkl','rb'))
+rna_lib = sc.read('corna_filtered.h5ad')
+atac_lib = sc.read('coatac_filtered.h5ad')
+pert_lib = pkl.load(open('copert_filtered.pkl','rb'))
 #load in com,cel,cou
-ccc = pkl.load(open(lib+'ccc.pkl','rb'))
-#ccc = pkl.load(open(lib+'pdccc.pkl','rb'))
+ccc = pkl.load(open('coccc.pkl','rb'))
 
 #load in new prom_overlaps and promenh_overlaps with 1000bp offset
 #   [tss_ind,rna_ind,[atac_inds]] for enhol/promenhol
 #   [tss_ind,rna_ind,atac_ind] for promol
-promol = pkl.load(open(lib+'1000ce_prom_overlaps.pkl','rb'))
-promenhol = pkl.load(open(lib+'1000ce_promenh_overlaps.pkl','rb'))
-enhol = pkl.load(open(lib+'1000ce_enh_overlaps.pkl','rb'))
+promol = pkl.load(open('co1000ce_prom_overlaps.pkl','rb'))
+promenhol = pkl.load(open('co1000ce_promenh_overlaps.pkl','rb'))
+enhol = pkl.load(open('co1000ce_enh_overlaps.pkl','rb'))
 
-ce_rna = pkl.load(open(lib+'nce_rna.pkl','rb'))                   #ce_rna but CPM normalized
-zce_rna = pkl.load(open(lib+'zce_rna.pkl','rb'))                  #nce_rna but z-scored
-ce_atac = pkl.load(open(lib+'nce_atac.pkl','rb'))                 #ce_atac but binarized and then CPM normalized
-ce_tss = pkl.load(open(lib+'ce_tss.pkl','rb'))                    #[chromosome,position,gene_name]
+ce_rna = pkl.load(open('conce_rna.pkl','rb'))                   #ce_rna but CPM normalized
+zce_rna = pkl.load(open('cozce_rna.pkl','rb'))                  #nce_rna but z-scored
+ce_atac = pkl.load(open('conce_atac.pkl','rb'))                 #ce_atac but binarized and then CPM normalized
+ce_tss = pkl.load(open('coce_tss.pkl','rb'))                    #[chromosome,position,gene_name]
 
 
-# ## Supporting Functions
-
-# In[60]:
-
+# Supporting Functions
 
 #for un-lning zce_rna.raw
 print("original type and shape:",type(zce_rna.raw.X),np.shape(zce_rna.raw.X))
 print('original values:',zce_rna.raw.X.todense())
-
 zce_rna.raw.X.data[:] = np.e**zce_rna.raw.X.data-1
-
 print("new type and shape:",type(zce_rna.raw.X),np.shape(zce_rna.raw.X))
 print('new values:',zce_rna.raw.X.todense())
-
-
-# In[24]:
-
 
 #__________________________________________________________________________________________________________________________________________________________________________
 #given list-like of cells in input and the index (featureout) of the feature of interest in anndata (arrayout), return foldchange using metacell
@@ -183,9 +89,6 @@ def hyperpvals(cellsin,cellsout,cellsall,cellsrand):
     N = np.sum(cellsin)                   #input feature
     n = np.sum(cellsout)                  #output feature
     M = np.sum(cellsall)                  #total
-    
-    #temp, remove when done
-    print(k,N,n,M)
     
     #find real p-val
     pval = ss.hypergeom.cdf(k,M,n,N)
