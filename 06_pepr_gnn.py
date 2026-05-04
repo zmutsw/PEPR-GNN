@@ -9,7 +9,6 @@ import numpy as np
 import scanpy as sc
 import pandas as pd
 import pickle as pkl
-import os
 import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
@@ -37,9 +36,6 @@ from torch_geometric.nn import MessagePassing
 import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, GraphConv, ResGatedGraphConv, SAGEConv, pool, to_hetero, to_hetero_with_bases
 import torch_geometric.transforms as T
-
-# set a working directory for saving plots
-os.chdir('/project/GCRB/Hon_lab/s437603/data/ghmt_multiome/analysis')
 
 hetlist = torch.load('pyg_hetlist_tv25_6merrchs.pt')
 
