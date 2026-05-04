@@ -1,15 +1,10 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import scanpy as sc
-# import scvi as sv
 import pandas as pd
 import pickle as pkl
-import os
 import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
@@ -38,13 +33,6 @@ import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, GraphConv, ResGatedGraphConv, SAGEConv, pool, to_hetero, to_hetero_with_bases
 import torch_geometric.transforms as T
 from scipy.stats import percentileofscore as pos
-
-# set a working directory for saving plots
-os.chdir('/project/GCRB/Hon_lab/s437603/data/ghmt_multiome/analysis')
-
-
-# In[2]:
-
 
 # tv = torch.load('pyg_hetlist_tv10.pt')
 tv = torch.load('pyg_hetlist_tv25_6merrchs.pt')
