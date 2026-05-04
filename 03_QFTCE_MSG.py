@@ -1,9 +1,6 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import scanpy as sc
 import scvi as sv
@@ -86,28 +83,15 @@ def hyperpvals(cellsin,cellsout,cellsall,cellsrand):
         cellsrand = [fakeout & cellsall for fakeout in cellsrand]
     
     k = np.sum(cellsin & cellsout)      #input feature AND output feature
-    N = np.sum(cellsin)                   #input feature
-    n = np.sum(cellsout)                  #output feature
-    M = np.sum(cellsall)                  #total
+    N = np.sum(cellsin)                 #input feature
+    n = np.sum(cellsout)                #output feature
+    M = np.sum(cellsall)                #total
     
-    #find real p-val
+    #find p-val
     pval = ss.hypergeom.cdf(k,M,n,N)
     t1pval = min(pval,1-pval)*2           #doesn't distinguish between enrichment or depletion, need foldchange to do so
     
-    #generate 1,000 fake p-vals
-    t1rpvals = []
-    for fakeout in cellsrand:
-        k = np.sum(cellsin & fakeout)    #input feature AND output feature
-        n = np.sum(fakeout)                #output feature 
-        #N and M do not change from real
-        rand_pval = ss.hypergeom.cdf(k,M,n,N)
-        rand_t1pval = min(rand_pval,1-rand_pval)*2   #doesn't distinguish between enrichment or depletion, need foldchange to do so
-        t1rpvals.append(rand_t1pval)
-    
-    #find q-value of the real p-val
-    adjval = percentileofscore(t1rpvals,t1pval)
-    
-    return t1pval,adjval
+    return t1pval
 #__________________________________________________________________________________________________________________________________________________________________________
 #given type of data in and out from ['perturbation','enhancer','promoter','rna'], return cell or feature lists and matrices to use them with
 def matrixgetter(intype,outtype):
@@ -179,15 +163,15 @@ def statgetter(intype,outtype):
                         tempcellsall = cellsall
                 
                 #make boolean arrays for hyperpvals()
-                #cellsin_bool = np.array([cell in cellsin for cell in cellsall])
-                #cellsout_bool = np.array([cell in cellsout for cell in cellsall])
-                #cellsall_bool = np.array([cell in tempcellsall for cell in cellsall])
+                cellsin_bool = np.array([cell in cellsin for cell in cellsall])
+                cellsout_bool = np.array([cell in cellsout for cell in cellsall])
+                cellsall_bool = np.array([cell in tempcellsall for cell in cellsall])
                 
                 #function calls
-                #pv,av = hyperpvals(cellsin_bool, cellsout_bool, cellsall_bool, rand_cellsout)
+                pv = hyperpvals(cellsin_bool, cellsout_bool, cellsall_bool, rand_cellsout)
                 fc = metacellfc(cellsin,featureout,tempcellsall,arrayout)
                 
-                inout_stat.append([fc])
+                inout_stat.append([pv,fc])
             total_inout_stats.append(inout_stat)
         
     #only entered if in=pert and out=enh
@@ -225,12 +209,11 @@ def statgetter(intype,outtype):
                     pv,av = hyperpvals(cellsin_bool, cellsout_bool, cellsall_bool, rand_cellsout)
                     fc = metacellfc(cellsin,featureout,tempcellsall,arrayout)
 
-                    inout_stat.append([fc])
+                    inout_stat.append([pv,fc])
                 tss_stats.append(inout_stat)
             total_inout_stats.append(tss_stats)
-            
-    #LEFT OFF HERE, SEE COMMENT BELOW!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    #delete return statement, uncomment pv&av calls and random&bool arrays, add pv&av back to total_inout_stats
+
+    #delete return statement
     return total_inout_stats
         
     
@@ -238,172 +221,42 @@ def statgetter(intype,outtype):
 #         pkl.dump(total_inout_stats,tios_file)
 #__________________________________________________________________________________________________________________________________________________________________________
 
-
-# In[ ]:
-
-
 stype = ['perturbation','enhancer','promoter','rna']
+
+#make statgetter() calls and save all results
+#te      -note that this call may take a very long time and need to be run in batches
 start = default_timer()
 tios = statgetter(stype[0],stype[1])
 print(default_timer()-start)
-print(tios)
-
-
-# In[4]:
-
-
-enhol
-
-
-# In[21]:
-
-
-enhol_inds = [enhol[which][2] for which in range(len(enhol)) if ce_rna.var_names[enhol[which][1]]=='Tnnt2']
-tlist = enhol_inds[0]
-
-
-# In[ ]:
-
-
-len(tlist)
-
-
-# ### LOAD IN FIXED RNA FCs AND SWAP OUT FOR OLD FCs, SAVING OLD FCs IN NEW FILES
-
-# In[3]:
-
-
-#load data
-# lib = 'bl'
-# lib = 'ln'
-lib = 'co'
-tr = pkl.load(open('total_'+lib+'_perturbationrna_stats.pkl','rb'))
-er = pkl.load(open('total_'+lib+'_enhancerrna_stats.pkl','rb'))
-pr = pkl.load(open('total_'+lib+'_promoterrna_stats.pkl','rb'))
-trfc = pkl.load(open('FCredo_'+lib+'_perturbationrna_stats.pkl','rb'))
-erfc = pkl.load(open('FCredo_'+lib+'_enhancerrna_stats.pkl','rb'))
-prfc = pkl.load(open('FCredo_'+lib+'_promoterrna_stats.pkl','rb'))
-
-#generate files to store old values
-old_tr,old_er,old_pr = tr.copy(),er.copy(),pr.copy()
-with open('old_total_'+lib+'_perturbationrna_stats.pkl', 'wb') as tios_file:
-    pkl.dump(old_tr,tios_file)
-with open('old_total_'+lib+'_enhancerrna_stats.pkl', 'wb') as tios_file:
-    pkl.dump(old_er,tios_file)
-with open('old_total_'+lib+'_promoterrna_stats.pkl', 'wb') as tios_file:
-    pkl.dump(old_pr,tios_file)
-
-#replace FCs
-for locus in range(len(tr)):
-    for comparison in range(len(tr[locus])):
-        tr[locus][comparison][-1] = trfc[locus][comparison][0]
-    for comparison in range(len(er[locus])):
-        er[locus][comparison][-1] = erfc[locus][comparison][0]
-    for comparison in range(len(pr[locus])):
-        pr[locus][comparison][-1] = prfc[locus][comparison][0]
-
-#save new files
-with open('total_'+lib+'_perturbationrna_stats.pkl', 'wb') as tios_file:
-    pkl.dump(tr,tios_file)
-with open('total_'+lib+'_enhancerrna_stats.pkl', 'wb') as tios_file:
-    pkl.dump(er,tios_file)
-with open('total_'+lib+'_promoterrna_stats.pkl', 'wb') as tios_file:
-    pkl.dump(pr,tios_file)
-
-
-# ## LOAD IN AND CONCAT DATA FROM SBATCH SUBMISSIONS
-
-# In[3]:
-
-
-TE_split = 12 #based on however many jobs TE had to be split into
-lib = 'bl'
-blte = []
-#manually add first one due to overwrite mess up, hence starting the loop from '2'
-te1a = pkl.load(open('total_'+lib+'_perturbationenhancer_stats1a.pkl','rb'))
-te1b = pkl.load(open('total_'+lib+'_perturbationenhancer_stats1b.pkl','rb'))
-blte+=te1a
-blte+=te1b
-for file_num in range(2,TE_split+1):
-    te = pkl.load(open('total_'+lib+'_perturbationenhancer_stats'+str(file_num)+'.pkl','rb'))
-    #print(len(blte),file_num)
-    blte+=te
-    #print(len(blte),file_num)
-bltp = pkl.load(open('total_'+lib+'_perturbationpromoter_stats.pkl','rb'))
-bltr = pkl.load(open('total_'+lib+'_perturbationrna_stats.pkl','rb'))
-blep = pkl.load(open('total_'+lib+'_enhancerpromoter_stats.pkl','rb'))
-bler = pkl.load(open('total_'+lib+'_enhancerrna_stats.pkl','rb'))
-blpr = pkl.load(open('total_'+lib+'_promoterrna_stats.pkl','rb'))
-
-
-# In[3]:
-
-
-TE_split = 11 #based on however many jobs TE had to be split into
-lib = 'ln'
-lnte = []
-for file_num in range(1,TE_split+1):
-    te = pkl.load(open('split_pe_files/total_'+lib+'_perturbationenhancer_stats'+str(file_num)+'.pkl','rb'))
-    lnte+=te
-# lntp = pkl.load(open('total_'+lib+'_perturbationpromoter_stats.pkl','rb'))
-# lntr = pkl.load(open('total_'+lib+'_perturbationrna_stats.pkl','rb'))
-# lnep = pkl.load(open('total_'+lib+'_enhancerpromoter_stats.pkl','rb'))
-# lner = pkl.load(open('total_'+lib+'_enhancerrna_stats.pkl','rb'))
-# lnpr = pkl.load(open('total_'+lib+'_promoterrna_stats.pkl','rb'))
-
-
-# In[11]:
-
-
-with open('total_bl_perturbationenhancer_stats.pkl', 'wb') as tios_file:
-    pkl.dump(blte,tios_file)
-
-
-# In[5]:
-
-
-with open('total_ln_perturbationenhancer_stats.pkl', 'wb') as tios_file:
-    pkl.dump(lnte,tios_file)
-
-
-# In[13]:
-
-
-newb = pkl.load(open('total_bl_perturbationenhancer_stats.pkl', 'rb'))
-
-
-# In[6]:
-
-
-newl = pkl.load(open('total_ln_perturbationenhancer_stats.pkl', 'rb'))
-
-
-# In[16]:
-
-
-print(len(newb),len(newl))
-
-
-# In[7]:
-
-
-len(newl)
-
-
-# In[6]:
-
-
-print(len(bltp),len(bltr),len(blep),len(bler),len(blpr))
-
-
-# In[8]:
-
-
-print(len(lnte),len(lntp),len(lntr),len(lnep),len(lner),len(lnpr))
-
-
-# In[ ]:
-
-
-blep
-
+with open('total_co_'+stype[0]+stype[1]+'_stats.pkl', 'wb') as tios_file:
+    pkl.dump(tios,tios_file)
+#tp
+start = default_timer()
+tios = statgetter(stype[0],stype[2])
+print(default_timer()-start)
+with open('total_co_'+stype[0]+stype[2]+'_stats.pkl', 'wb') as tios_file:
+    pkl.dump(tios,tios_file)
+#tr
+start = default_timer()
+tios = statgetter(stype[0],stype[3])
+print(default_timer()-start)
+with open('total_co_'+stype[0]+stype[3]+'_stats.pkl', 'wb') as tios_file:
+    pkl.dump(tios,tios_file)
+#ep
+start = default_timer()
+tios = statgetter(stype[1],stype[2])
+print(default_timer()-start)
+with open('total_co_'+stype[1]+stype[2]+'_stats.pkl', 'wb') as tios_file:
+    pkl.dump(tios,tios_file)
+#er
+start = default_timer()
+tios = statgetter(stype[1],stype[3])
+print(default_timer()-start)
+with open('total_co_'+stype[1]+stype[3]+'_stats.pkl', 'wb') as tios_file:
+    pkl.dump(tios,tios_file)
+#pr
+start = default_timer()
+tios = statgetter(stype[2],stype[3])
+print(default_timer()-start)
+with open('total_co_'+stype[2]+stype[3]+'_stats.pkl', 'wb') as tios_file:
+    pkl.dump(tios,tios_file)
