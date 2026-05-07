@@ -1,9 +1,6 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import scanpy as sc
 import pandas as pd
@@ -19,7 +16,6 @@ import sys
 import random
 import networkx as nx
 
-# lib = 'bl'
 lib = 'ln'
 
 #ORIGINAL FILTERED LIBS
