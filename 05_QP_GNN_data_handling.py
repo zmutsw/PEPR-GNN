@@ -3223,25 +3223,6 @@ for graph_id,graph in enumerate(datalist):
     test_list.append(c4_this_a)
 print(dtime() - start)
 
-
-# In[13]:
-
-
-test_list
-
-
-# In[26]:
-
-
-0 0.03635289520025253
-100 118.12350665032864
-200 547.2181168794632
-300 1404.4731707647443
-
-
-# In[26]:
-
-
 #create binary matrix from all perturbation combos
 tf_combos = ccc[0].copy()
 tf_combos[0] = ''
