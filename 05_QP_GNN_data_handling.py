@@ -1400,42 +1400,39 @@ with open('newbtrainmask.pkl','wb') as mfile:
 
 # ## LOAD IN FILES
 
-# In[2]:
-
-
 # lib = 'bl'
 # lib = 'ln'
 lib = 'co'
 
 #ORIGINAL FILTERED LIBS
-rna_lib = sc.read(lib+'rna_filtered.h5ad')
-atac_lib = sc.read(lib+'atac_filtered.h5ad')
-pert_lib = pkl.load(open(lib+'pert_filtered.pkl','rb'))
-ccc = pkl.load(open(lib+'ccc.pkl','rb'))
+rna_lib = sc.read('corna_filtered.h5ad')
+atac_lib = sc.read('coatac_filtered.h5ad')
+pert_lib = pkl.load(open('copert_filtered.pkl','rb'))
+ccc = pkl.load(open('coccc.pkl','rb'))
 #nc = 1426, ghmt = 626
 
 # [tss_ind,rna_ind,[atac_inds]] for enhol
 # [tss_ind,rna_ind,atac_ind] for promol
 # load in new prom_overlaps and promenh_overlaps with 1000bp offset
-promol = pkl.load(open(lib+'1000ce_prom_overlaps.pkl','rb'))
-promenhol = pkl.load(open(lib+'1000ce_promenh_overlaps.pkl','rb'))
-enhol = pkl.load(open(lib+'1000ce_enh_overlaps.pkl','rb'))
+promol = pkl.load(open('co1000ce_prom_overlaps.pkl','rb'))
+promenhol = pkl.load(open('co1000ce_promenh_overlaps.pkl','rb'))
+enhol = pkl.load(open('co1000ce_enh_overlaps.pkl','rb'))
 
 # LOAD IN CE LIBS
-ce_rna = pkl.load(open(lib+'nce_rna.pkl','rb'))                   #ce_rna but CPM normalized
-zce_rna = pkl.load(open(lib+'zce_rna.pkl','rb'))                  #nce_rna but z-scored
-ce_atac = pkl.load(open(lib+'nce_atac.pkl','rb'))                 #ce_atac but binarized and then CPM normalized
-ce_tss = pkl.load(open(lib+'ce_tss.pkl','rb'))
+ce_rna = pkl.load(open('conce_rna.pkl','rb'))                   #ce_rna but CPM normalized
+zce_rna = pkl.load(open('cozce_rna.pkl','rb'))                  #nce_rna but z-scored
+ce_atac = pkl.load(open('conce_atac.pkl','rb'))                 #ce_atac but binarized and then CPM normalized
+ce_tss = pkl.load(open('coce_tss.pkl','rb'))
 
 # LOAD IN FULL STATS FILES,    each element is in form [pv,qv,fc]
-unflat_te = pkl.load(open('total_'+lib+'_perturbationenhancer_stats.pkl','rb'))
+unflat_te = pkl.load(open('total_co_perturbationenhancer_stats.pkl','rb'))
 # te = [[stats for pert in enh for stats in pert] for enh in unflat_te] #flatten by one dimension
 te = unflat_te
-tp = pkl.load(open('total_'+lib+'_perturbationpromoter_stats.pkl','rb'))
-tr = pkl.load(open('total_'+lib+'_perturbationrna_stats.pkl','rb'))
-ep = pkl.load(open('total_'+lib+'_enhancerpromoter_stats.pkl','rb'))
-er = pkl.load(open('total_'+lib+'_enhancerrna_stats.pkl','rb'))
-pr = pkl.load(open('total_'+lib+'_promoterrna_stats.pkl','rb'))
+tp = pkl.load(open('total_co_perturbationpromoter_stats.pkl','rb'))
+tr = pkl.load(open('total_co_perturbationrna_stats.pkl','rb'))
+ep = pkl.load(open('total_co_enhancerpromoter_stats.pkl','rb'))
+er = pkl.load(open('total_co_enhancerrna_stats.pkl','rb'))
+pr = pkl.load(open('total_co_promoterrna_stats.pkl','rb'))
 
 #Misc. auxiliary structures
 perts,tf_list = ['NC'],['G','H','M','T']
@@ -1506,9 +1503,6 @@ plt.scatter(logx,y)
 
 # ## DATA PREP and UTILS
 
-# In[4]:
-
-
 #takes int (element in setgoid) and converts it to corresponding go ID string
 def go_getter(go_integer):
     num_digits = len(str(go_integer))
@@ -1521,28 +1515,16 @@ def get_edges(graph,key,pos):
     dict_keys = [edge_type for edge_type in graph.metadata()[1] if edge_type[pos] == key]
     return [graph[key] for key in dict_keys]
 
-
-# In[ ]:
-
-
 #optional: add full gotensor as graph level features, along with select go_bool rows
 for graph_id,graph in enumerate(datalist):
 #     graph.card = cardiac_bool[graph_id]
 #     graph.fibr = fibroblast_bool[graph_id]
     graph.gote = gotensor[graph_id]
 
-
-# In[5]:
-
-
 #classify genes by DEG status (up,down,null) between NC and GHMT
 np_cells = [cell for cell in ccc[1][0] if cell not in ccc[1][15]] + [cell for cell in ccc[1][15] if cell not in ccc[1][0]]
 np_rna = ce_rna[np_cells]
 np_rna.obs['treatment'] = ['NC'*(cell in ccc[1][0])+'GHMT'*(cell in ccc[1][15]) for cell in np_rna.obs_names]
-
-
-# In[75]:
-
 
 sc.tl.rank_genes_groups(np_rna, 'treatment', method='wilcoxon')
 # sc.pl.rank_genes_groups(np_rna,fontsize=15)
@@ -1552,15 +1534,7 @@ for gene_pair in np_rna.uns['rank_genes_groups']['names'][0:cutoff]:
     updeg.append(gene_pair[0]),downdeg.append(gene_pair[1])
 nodeg = [gene for gene in gl if gene not in updeg and gene not in downdeg]
 
-
-# In[76]:
-
-
 len(updeg),len(downdeg),len(nodeg)
-
-
-# In[77]:
-
 
 #convert to true heterodata
 hetlist = []
@@ -1645,14 +1619,7 @@ for graph_id,data in enumerate(datalist):
 
 # ## Remove 6mer/indirect edges from predtfr hetlist
 
-# In[ ]:
-
-
 hetlist = torch.load('pyg_hetlist_predtfr_trin_'+lib+'.pt')
-
-
-# In[49]:
-
 
 lib = 'co'
 hetlist = torch.load('pyg_hetlist500pca_predtfr_'+lib+'.pt')
@@ -2191,10 +2158,6 @@ torch.save(hetlist,'pyg_'+hetmod+'_tprshuffle_'+lib+'.pt')
 
 
 hetlist = torch.load('pyg_'+hetmod+'_'+lib+'.pt')
-
-
-# In[ ]:
-
 
 #randomize enh->prom PVs
 #compile pool of all enh->prom PVs
