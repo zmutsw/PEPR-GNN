@@ -1,9 +1,6 @@
 
 # coding: utf-8
 
-# In[1]:
-
-
 import numpy as np
 import scanpy as sc
 import pandas as pd
