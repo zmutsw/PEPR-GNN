@@ -1,8 +1,6 @@
 
 # coding: utf-8
 
-#optimize for neural net running, including modular architecture and graph inclusion
-
 import numpy as np
 import scanpy as sc
 import pandas as pd
@@ -17,8 +15,6 @@ from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
 from timeit import default_timer as dtime
-import multiprocessing
-from multiprocessing import Pool
 from scipy.stats import percentileofscore
 import sys
 import random
@@ -36,47 +32,18 @@ import torch.nn.functional as F
 from torch_geometric.nn import GCNConv, GraphConv, ResGatedGraphConv, SAGEConv, pool, to_hetero, to_hetero_with_bases, TransformerConv
 import torch_geometric.transforms as T
 
-# ## LOAD IN FILES
+import pickle
+import io
 
-# In[2]:
-
-
-#version check
-print(sc.__version__)
-print(pyg.__version__)
-
-
-# In[3]:
-
-
-import doubletdetection as dd
-print(dd.__version__)
-
-
-# In[2]:
-
-
-# tv10 = torch.load('pyg_hetlist_tv10.pt')
-# tv25 = torch.load('pyg_hetlist_tv25.pt')
-# tv25 = torch.load('pyg_hetlist_tv25_6merrc.pt')
+#load in dataset
 tv25 = torch.load('pyg_hetlist_tv25_6merrchs.pt')
-# tv25 = torch.load('pyg_hetlist_tv25_ran.pt')
-# tv25 = torch.load('pyg_hetlist_tv25_gmf.pt')
-# tv25 = torch.load('pyg_hetlist_tv25_rannopa.pt')
-# tv50 = torch.load('pyg_hetlist_tv50.pt')
-# tv100 = torch.load('pyg_hetlist_tv100.pt')
-# hetl = torch.load('pyg_hetlist_predf3_trin25_co.pt')
 
 
 # ## DATA PREP and UTILS
-
-# In[3]:
-
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-import pickle
-import io
+#use example:
+#model = CPU_unpickler(open('model_iterX.pkl','rb')).load()
 class CPU_unpickler(pickle.Unpickler):
     def find_class(self, module, name):
         if module == 'torch.storage' and name == '_load_from_bytes':
@@ -131,10 +98,6 @@ def get_trin(oh):
 
 sig = tc.nn.Sigmoid() #define sigmoid function for transforming outputs
 
-
-# In[4]:
-
-
 #NEW heterodata prep and loading
 fulllist = tv25
 mask = pkl.load(open('newbtrainmask.pkl','rb'))
@@ -144,30 +107,6 @@ trainlist = [fulllist[ind] for ind in range(len(fulllist)) if not mask[ind]]
 fullloader = pyg.loader.DataLoader(fulllist,shuffle=False)
 trainloader = pyg.loader.DataLoader(trainlist[::50],shuffle=False)
 testloader = pyg.loader.DataLoader(testlist,shuffle=False)
-
-
-# ## hetero GraphConv model
-
-# In[ ]:
-
-
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
-import pickle
-import io
-class CPU_unpickler(pickle.Unpickler):
-    def find_class(self, module, name):
-        if module == 'torch.storage' and name == '_load_from_bytes':
-            return lambda b: torch.load(io.BytesIO(b), map_location='cpu')
-        else:
-            return super().find_class(module, name)
-
-#use example:
-#model = CPU_unpickler(open('model_iterX.pkl','rb')).load()
-
-
-# In[ ]:
-
 
 #for running existing model
 # model = CPU_unpickler(open('hg4_48n_iter930.pkl','rb')).load()
