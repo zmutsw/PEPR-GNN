@@ -403,15 +403,12 @@ np.sum(l1g),np.sum(l1h),np.sum(l1m),np.sum(l1t)
 sc.tl.tsne(adata)
 
 #saves adata object
-# adata.write('adata7_annotated.h5ad')
-# adata.write('adata6_ran_annotated.h5ad')
-# adata.write('adata6_gmf_annotated.h5ad')
-# adata.write('adata6_rannopa_annotated.h5ad')
 adata.write('adata6_annotated.h5ad')
 
 #loads adata object
 adata = sc.read('adata6_annotated.h5ad')
 
+#displays tSNE embedding
 fig, ax = plt.subplots(figsize=(30,20))
 sc.pl.tsne(
     adata,
