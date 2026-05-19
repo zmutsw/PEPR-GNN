@@ -109,18 +109,9 @@ trainloader = pyg.loader.DataLoader(trainlist[::50],shuffle=False)
 testloader = pyg.loader.DataLoader(testlist,shuffle=False)
 
 #for running existing model
-# model = CPU_unpickler(open('hg4_48n_iter930.pkl','rb')).load()
-# model = CPU_unpickler(open('hg6_64ndo25ll_iter5000.pkl','rb')).load()   #emb7
-# model = CPU_unpickler(open('hg5_udep_hsb_iter760.pkl','rb')).load()     #emb6
-# model = CPU_unpickler(open('hg5_ran_iter1920.pkl','rb')).load()     #emb6_ran
-# model = CPU_unpickler(open('hg5_gmf_iter1920.pkl','rb')).load()     #emb6_gmf
-model = CPU_unpickler(open('hg5_rannopa_iter1960.pkl','rb')).load()     #emb6_rannopa
-
-
-# In[ ]:
-
-
+model = CPU_unpickler(open('hg5_udep_hsbb_iter2000.pkl','rb')).load()     #emb6
 model.eval()
+
 #for start metrics, not essential
 losslist,timelist = [],[]
 #end metrics
