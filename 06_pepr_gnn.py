@@ -1,26 +1,18 @@
 
 # coding: utf-8
 
-# In[1]:
-import ctypes
-libgcc_s=ctypes.CDLL('libgcc_s.so.1')
-
 import numpy as np
 import scanpy as sc
 import pandas as pd
 import pickle as pkl
 import seaborn as sb
 import scipy.sparse as csr
-from itertools import combinations
 import matplotlib.pyplot as plt
 import sklearn.linear_model as skl
 from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
 from timeit import default_timer as dtime
-import multiprocessing
-from multiprocessing import Pool
-from scipy.stats import percentileofscore
 import sys
 import random
 import networkx as nx
