@@ -31,12 +31,6 @@ import torch_geometric.transforms as T
 
 hetlist = torch.load('pyg_hetlist_tv25_6merrchs.pt')
 
-#takes int (element in setgoid) and converts it to corresponding go ID string
-def go_getter(go_integer):
-    num_digits = len(str(go_integer))
-    goid_str = 'GO:'+'0'*(7-num_digits)+str(go_integer)
-    return goid_str
-
 #takes graph (pyg het object), edge or node type name, and position (0=origin node, 1=edge type, 2=destination node)
 #and returns list of edge dictionaries
 def get_edges(graph,key,pos):
