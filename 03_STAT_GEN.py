@@ -9,7 +9,6 @@ import scipy.sparse as csr
 from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
-from timeit import default_timer
 
 #Combined library
 lib = 'co'
