@@ -11,7 +11,6 @@ import matplotlib.pyplot as plt
 from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
-from timeit import default_timer
 import sys
 import random
 import networkx as nx
