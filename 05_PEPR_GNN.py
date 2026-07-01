@@ -16,20 +16,16 @@ from timeit import default_timer as dtime
 import sys
 import random
 import networkx as nx
-import copy
-import csv
 
 import torch
 import torch as tc
 import torch_geometric as pyg
 from torch import Tensor
-from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import MessagePassing
+from torch.nn import Linear, ReLU
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, GraphConv, ResGatedGraphConv, SAGEConv, pool, to_hetero, to_hetero_with_bases
-import torch_geometric.transforms as T
+from torch_geometric.nn import GraphConv, pool
 
-hetlist = torch.load('pyg_hetlist_tv25_6merrchs.pt')
+hetlist = tc.load('pyg_hetlist_tv25_6merrchs.pt')
 
 #takes graph (pyg het object), edge or node type name, and position (0=origin node, 1=edge type, 2=destination node)
 #and returns list of edge dictionaries
