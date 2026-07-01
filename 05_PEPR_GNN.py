@@ -7,7 +7,6 @@ import pandas as pd
 import pickle as pkl
 import seaborn as sb
 import scipy.sparse as csr
-import matplotlib.pyplot as plt
 import sklearn.linear_model as skl
 from scipy.stats import gaussian_kde
 import scipy.stats as ss
