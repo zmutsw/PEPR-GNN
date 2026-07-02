@@ -22,10 +22,9 @@ import torch
 import torch as tc
 import torch_geometric as pyg
 from torch import Tensor
-from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import MessagePassing
+from torch.nn import Linear, ReLU
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, GraphConv, ResGatedGraphConv, SAGEConv, pool, to_hetero, to_hetero_with_bases, TransformerConv
+from torch_geometric.nn import GCNConv, GraphConv, pool
 import torch_geometric.transforms as T
 
 import pickle
