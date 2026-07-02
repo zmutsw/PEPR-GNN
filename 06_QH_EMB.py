@@ -9,13 +9,9 @@ import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
 import matplotlib.pyplot as plt
-import matplotlib.colors as mcolo
-import sklearn.linear_model as skl
-from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
 from timeit import default_timer as dtime
-from scipy.stats import percentileofscore
 import sys
 import random
 import networkx as nx
