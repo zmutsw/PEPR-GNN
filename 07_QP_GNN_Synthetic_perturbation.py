@@ -1,4 +1,3 @@
-
 # coding: utf-8
 
 import numpy as np
@@ -9,38 +8,24 @@ import seaborn as sb
 import scipy.sparse as csr
 from itertools import combinations
 import matplotlib.pyplot as plt
-import sklearn.linear_model as skl
-from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
-from timeit import default_timer as dtime
-import multiprocessing
-from multiprocessing import Pool
-from scipy.stats import percentileofscore as pos
 import sys
 import random
 import networkx as nx
-import copy
-import csv
 
 import torch
 import torch as tc
 import torch_geometric as pyg
 from torch import Tensor
-from torch.nn import Sequential, Linear, ReLU
-from torch_geometric.nn import MessagePassing
+from torch.nn import Linear, ReLU
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, GraphConv, ResGatedGraphConv, SAGEConv, pool, to_hetero, to_hetero_with_bases
-import torch_geometric.transforms as T
-from scipy.stats import percentileofscore as pos
+from torch_geometric.nn import GraphConv, pool
 
-# tv = torch.load('pyg_hetlist_tv10.pt')
+import pickle
+import io
+
 tv = torch.load('pyg_hetlist_tv25_6merrchs.pt')
-# tv = torch.load('pyg_hetlist_tv50.pt')
-
-
-# In[3]:
-
 
 #heterodata prep and loading
 fulllist = tv
@@ -48,26 +33,11 @@ mask = pkl.load(open('newbtrainmask.pkl','rb'))
 testlist = [fulllist[ind] for ind in range(len(fulllist)) if mask[ind]]
 trainlist = [fulllist[ind] for ind in range(len(fulllist)) if not mask[ind]]
 
-
-# In[3]:
-
-
 #loaderize datasets
 gpb = 10 #graphs per batch
 fullloader = pyg.loader.DataLoader(fulllist,shuffle=False)
 trainloader = pyg.loader.DataLoader(trainlist,shuffle=True,batch_size=gpb)
 testloader = pyg.loader.DataLoader(testlist,shuffle=False)
-
-
-# In[12]:
-
-
-x=1404
-mask[x-1:x+5]
-
-
-# In[2]:
-
 
 adata_6mer = sc.read('6mer_adata_co.h5ad') #adata of all atac 6mer vectors
 def rev_comp(motif):
@@ -83,15 +53,7 @@ def rev_comp(motif):
             rev_motif+='A'
     return rev_motif
 
-
-# In[3]:
-
-
 seqnames = list(adata_6mer.var_names)
-
-
-# In[4]:
-
 
 rc_seqs = []
 for sid,seq in enumerate(seqnames):
