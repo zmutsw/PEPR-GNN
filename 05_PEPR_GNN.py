@@ -7,8 +7,6 @@ import pandas as pd
 import pickle as pkl
 import seaborn as sb
 import scipy.sparse as csr
-import sklearn.linear_model as skl
-from scipy.stats import gaussian_kde
 import scipy.stats as ss
 import math
 from timeit import default_timer as dtime
