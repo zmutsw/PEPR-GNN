@@ -15,8 +15,6 @@ from timeit import default_timer as dtime
 import sys
 import random
 import networkx as nx
-import copy
-import csv
 
 import torch
 import torch as tc
