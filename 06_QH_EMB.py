@@ -24,7 +24,7 @@ import torch_geometric as pyg
 from torch import Tensor
 from torch.nn import Linear, ReLU
 import torch.nn.functional as F
-from torch_geometric.nn import GCNConv, GraphConv, pool
+from torch_geometric.nn import GraphConv, pool
 import torch_geometric.transforms as T
 
 import pickle
