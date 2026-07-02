@@ -109,7 +109,7 @@ trainloader = pyg.loader.DataLoader(trainlist[::50],shuffle=False)
 testloader = pyg.loader.DataLoader(testlist,shuffle=False)
 
 #for running existing model
-model = CPU_unpickler(open('hg5_udep_hsbb_iter2000.pkl','rb')).load()     #emb6
+model = CPU_unpickler(open('hg5_udep_hsbb_iter2000.pkl','rb')).load()
 model.eval()
 
 raw_emb = []
@@ -151,7 +151,7 @@ for data in fullloader:
 # ## UMAP
 raw_emb = pkl.load(open('raw_emb.pkl','rb'))
 glist = tv25    #if using all graphs
-# glist = testlist    #if using test graphs
+# glist = testlist    #if using test graphs only
 
 arem = [embed.detach().numpy() for embed in raw_emb]
 datamat = np.reshape(np.array(arem),(-1,96)) #for e pooling
