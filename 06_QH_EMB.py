@@ -23,7 +23,6 @@ from torch import Tensor
 from torch.nn import Linear, ReLU
 import torch.nn.functional as F
 from torch_geometric.nn import GraphConv, pool
-import torch_geometric.transforms as T
 
 import pickle
 import io
